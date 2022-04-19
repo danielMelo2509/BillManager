@@ -1,0 +1,213 @@
+﻿@using System.Globalization;
+@model BillManager.Models.BillsCreationModel
+@{
+    var TituloBoton = Model.ObjBillDto != null ? "Guardar" : "Crear";
+    var TituloModal = Model.ObjBillDto != null ? "Edición de factura" : "Creación de factura";
+    var NumeroFactura = Model.ObjBillDto != null ? Model.ObjBillDto.BillNumber : 1;
+    var IdFactura = Model.ObjBillDto != null ? Model.ObjBillDto.IdBill : 0;
+    var FechaFactura = Model.ObjBillDto != null ? Model.ObjBillDto.Date : DateTime.Now;
+    var TipoPago = Model.ObjBillDto != null ? Model.ObjBillDto.PaymentType : "";
+    var DocumentoCliente = Model.ObjBillDto != null ? Model.ObjBillDto.CustomerDocument.ToString() : "";
+    var NombreCliente = Model.ObjBillDto != null ? Model.ObjBillDto.CustomerName : "";
+    var Descuento = Model.ObjBillDto != null ? Model.ObjBillDto.Discount : 0;
+    var IVA = Model.ObjBillDto != null ? Model.ObjBillDto.IVA : 19;
+    var TotalDescuento = Model.ObjBillDto != null ? Model.ObjBillDto.TotalDiscount.ToString("C", CultureInfo.GetCultureInfo("es-CO")) : "";
+    var TotalImpuesto = Model.ObjBillDto != null ? Model.ObjBillDto.TotalTax.ToString("C", CultureInfo.GetCultureInfo("es-CO")) : "";
+    var Subtotal = Model.ObjBillDto != null ? Model.ObjBillDto.Subtotal.ToString("C", CultureInfo.GetCultureInfo("es-CO")) : "";
+    var Total = Model.ObjBillDto != null ? Model.ObjBillDto.Total.ToString("C", CultureInfo.GetCultureInfo("es-CO")) : "";
+}
+
+<div class="modal-dialog" id="hola" style="overflow-y: initial !important;">
+    <div class="modal-content">
+
+
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">@TituloModal</h4>
+        </div>
+
+        <div class="modal-body" style="max-height: calc(100vh - 210px); overflow-y: auto;">
+
+            <div class="row justify-content-between">
+
+
+                <div class="form-group col-lg-4">
+                    <label for="NumeroFactura">Número de factura</label>
+                    <input type="text" class="form-control" id="NumeroFactura" data-id-factura="@IdFactura" value="@NumeroFactura">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="FechaFactura">Fecha factura</label>
+                    @Html.TextBoxFor(x => FechaFactura, "{0:yyyy-MM-ddTHH:mm}", new
+                    {
+                        @class = "form-control",
+                        @type = "datetime-local",
+                        id = "FechaFactura"
+                    })
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="TipoPago">Tipo pago</label>
+                    <input type="text" class="form-control" id="TipoPago" value="@TipoPago">
+                </div>
+
+
+            </div>
+
+            <div class="row justify-content-between">
+
+
+                <div class="form-group col-lg-4">
+                    <label for="DocumentoCliente">Documento cliente</label>
+                    <input type="text" class="form-control" id="DocumentoCliente" min="1" value="@DocumentoCliente">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="NombreCliente">Nombre cliente</label>
+                    <input type="text" class="form-control" id="NombreCliente" , value="@NombreCliente">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="Descuento">Descuento (%)</label>
+                    <input type="number" class="form-control Min0" id="Descuento" min="0" value="@Descuento">
+                </div>
+
+
+            </div>
+
+            <div class="row justify-content-between">
+
+
+                <div class="form-group col-lg-4">
+                    <label for="IVA">IVA (%)</label>
+                    <input type="number" class="form-control Min0" id="IVA" min="0" value="@IVA">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="TotalDescuento">Total descuento</label>
+                    <input type="text" class="form-control" id="TotalDescuento" disabled value="@TotalDescuento" placeholder="Cálculo interno">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="TotalImpuesto">Total impuesto</label>
+                    <input type="text" class="form-control" id="TotalImpuesto" disabled value="@TotalImpuesto" placeholder="Cálculo interno">
+                </div>
+
+
+            </div>
+
+
+            <div class="row justify-content-center">
+
+
+                <div class="form-group col-lg-4">
+                    <label for="Subtotal">Subtotal</label>
+                    <input type="text" class="form-control" id="Subtotal" disabled value="@Subtotal" placeholder="Cálculo interno">
+                </div>
+
+                <div class="form-group col-lg-4">
+                    <label for="Total">Total</label>
+                    <input type="text" class="form-control" id="Total" disabled value="@Total" placeholder="Cálculo interno">
+                </div>
+
+
+            </div>
+
+
+            <hr />
+
+            <div class="row justify-content-lg-between">
+
+
+                <div class="form-group col-sm-4">
+                    <label for="DetalleProducto">Producto</label>
+                    <select class="form-control" id="DetalleProducto">
+                        @foreach (var Producto in Model.LstProducts)
+                        {
+                            <option class="OpcionProducto" data-producto-id="@Producto.IdProduct">@Producto.ProductName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group col-sm-3">
+                    <label for="DetalleCantidad">Cantidad</label>
+                    <input type="number" class="form-control Min0" id="DetalleCantidad" min="0">
+                </div>
+
+                <div class="form-group col-sm-3">
+                    <label for="DetallePrecioUn">Precio unitario</label>
+                    <input type="number" class="form-control Min0" id="DetallePrecioUn" min="0">
+                </div>
+
+                <div class="form-group col-md-2 align-content-sm-center">
+                    <label for="BtnAdd">Agregar</label>
+                    <button class="form-control btn" id="BtnAdd"><i class="fa fa-plus"></i></button>
+                </div>
+
+            </div>
+
+            <table style="margin-top:20px;" class="table table-striped" id="TablaDetalles">
+                <thead>
+                    <tr>
+                        <th class="color-black">Producto</th>
+                        <th class="color-black">Cantidad</th>
+                        <th class="color-black">Precio unit.</th>
+                        <th class="color-black">Remover</th>
+                    </tr>
+                </thead>
+                @if (Model.ObjBillDto?.Details != null)
+                {
+                    <tbody>
+                        @foreach (var Detalle in Model.ObjBillDto.Details)
+                        {
+                            var Producto = Model.LstProducts.FirstOrDefault(x => x.IdProduct == Detalle.IdProduct);
+                            <tr>
+                                <td class="color-black Producto" data-id-detalle="@Detalle.IdDetail" data-id-producto="@Producto.IdProduct">@Producto.ProductName</td>
+                                <td class="color-black Cantidad">@Detalle.Quantity</td>
+                                <td class="color-black PrecioUn">@Detalle.UnitPrice</td>
+                                <td class="button-table-cell">
+                                    <button class="btn BtnRemoverDetalle"><i class="fa fa-remove"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+                else
+                {
+                    <tbody></tbody>
+                }
+            </table>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="@TituloBoton">@TituloBoton</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    /*Función que evita que se ingresen valores negativos en los componentes con la clase descrita*/
+    $(function () {
+        $(".Min0").keydown(function () {
+            if (!$(this).val() || parseInt($(this).val()) >= 0)
+                $(this).data("old", $(this).val());
+        });
+        $(".Min0").keyup(function () {
+            if (!$(this).val() || parseInt($(this).val()) >= 0)
+                ;
+            else
+                $(this).val($(this).data("old"));
+        });
+    });
+
+    /*Función que impide que se seleccione una fecha anterior al día actual*/
+    $(function () {
+        var today = (new Date());
+        today.setDate(today.getDate());
+        document.getElementById("FechaFactura").setAttribute('min', today.toISOString().split(".")[0]);
+    });
+</script>
+
+
+

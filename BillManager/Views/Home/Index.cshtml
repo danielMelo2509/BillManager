@@ -1,0 +1,193 @@
+﻿@using System.Globalization;
+@model BillManager.Models.BillsViewerModel
+@{
+    ViewBag.Title = "Bill Manager";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.Title</title>
+    <!--
+    Template 2089 Meteor
+    http://www.tooplate.com/view/2089-meteor
+    -->
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="~/Content/fontAwesome.css">
+    <link rel="stylesheet" href="~/Content/hero-slider.css">
+    <link rel="stylesheet" href="~/Content/tooplate-style.css">
+    <link rel="stylesheet" href="~/Content/Site.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800" rel="stylesheet">
+
+    <script type="text/javascript" src="~/Scripts/sweetalert2.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Scripts/Internos/ScriptGeneral.js"></script>
+
+</head>
+
+
+<body>
+    <header style="background-color: rgba(255, 255, 255, 0.5);" class="header" id="Header">
+
+        <div style="margin-left:30px;" class="">
+            <a href="https://gtd.com.co/" class="navbar-brand scroll-top" target="_blank">
+                <img style="width:400px; height:auto; margin-top:2px; cursor:pointer;" src="https://gtd.com.co/wp-content/uploads/2022/03/GTDlogo-scaled.webp" title="GTDlogo">
+            </a>
+        </div>
+    </header>
+
+
+    <div class="cd-full-width">
+        <div class="slide-caption" style="text-align:center; background-color:transparent; text-align:center; margin-top:30px; height:39em; position:relative;">
+            <h2>Administrador de facturas</h2>
+
+
+            <div class="tbl-header">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Número factura</th>
+                            <th>Cliente</th>
+                            <th>Total</th>
+                            <th style="text-align: center; width: 10%;">Opciones</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table cellpadding="0" cellspacing="0" border="0">
+                    <tbody>
+                        @foreach (var ObjFactura in Model.LstBillsDto)
+                        {
+                            <tr>
+                                <td>@ObjFactura.Date.ToString("dd-MMM-yyyy hh:mm:ss tt")</td>
+                                <td>@ObjFactura.BillNumber</td>
+                                <td>@ObjFactura.CustomerName</td>
+                                <td>@ObjFactura.Total.ToString("C", CultureInfo.GetCultureInfo("es-CO"))</td>
+                                <td class="button-table-cell" width:10%;">
+                                    <button type="button" class="btn btn-info btn-lg BtnEditarFactura" data-billobject="@(Newtonsoft.Json.JsonConvert.SerializeObject(ObjFactura))"><i class="fa fa-pencil"></i></button>
+                                    <button class="btn BtnEliminarFactura" data-numero-factura="@ObjFactura.BillNumber" data-id-factura="@ObjFactura.IdBill"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="primary-button" style="">
+                <a class="scroll-link BtnCreateBill">Crear factura</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="contenedormodal">
+        <div id="myModal" role="dialog" class="modal fade in" data-url="@Url.Action("ViewTest", "Home")">
+            <div id="ModalBillViewer">
+            </div>
+        </div>
+    </div>
+
+
+
+    <footer>
+        <div class="container">
+            <div class="col-md-6">
+                <div class="copyright-text">
+                    <p>Vista para prueba técnica - Daniel Santiago Melo Suárez</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="social-icons">
+                    <ul>
+                        <li>
+                            <a href="#"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+        h1 {
+            font-size: 30px;
+            color: #fff;
+            text-transform: uppercase;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .tbl-header {
+            background-color: rgba(255,255,255,0.3);
+            margin-top: 30px;
+        }
+
+        .tbl-content {
+            height: 65%;
+            overflow-x: auto;
+            margin-top: 0px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        th {
+            padding: 20px 15px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 16px;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 15px;
+            text-align: left;
+            vertical-align: middle;
+            font-weight: 300;
+            font-size: 14px;
+            color: #fff;
+            border-bottom: solid 1px rgba(255,255,255,0.1);
+        }
+
+        .btn {
+            background-color: DodgerBlue;
+            border: none;
+            color: white;
+            padding: 2px 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .button-table-cell {
+            text-align: center;
+            width: 10%;
+        }
+
+        .color-black {
+            color: black;
+            text-align: center;
+        }
+    </style>
+</body>
+
+</html>
